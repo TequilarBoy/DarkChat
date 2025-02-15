@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DarkChat", "DarkChat\DarkChat.csproj", "{6CF88B40-EAB8-4261-B209-55F138866EE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{3D0EE26D-DFBF-45F4-B587-6FEC37D22CA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CF88B40-EAB8-4261-B209-55F138866EE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CF88B40-EAB8-4261-B209-55F138866EE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CF88B40-EAB8-4261-B209-55F138866EE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CF88B40-EAB8-4261-B209-55F138866EE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D0EE26D-DFBF-45F4-B587-6FEC37D22CA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D0EE26D-DFBF-45F4-B587-6FEC37D22CA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D0EE26D-DFBF-45F4-B587-6FEC37D22CA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D0EE26D-DFBF-45F4-B587-6FEC37D22CA6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {511BE268-9CF5-400A-A2E1-AA37B7CC0CDD}
+	EndGlobalSection
+EndGlobal
