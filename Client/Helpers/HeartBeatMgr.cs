@@ -1,13 +1,9 @@
 ﻿using Client.Unit;
-using DarkChat.Helpers;
 using DarkClient.Unit;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Client.Helpers
 {
@@ -30,6 +26,7 @@ namespace Client.Helpers
         {
             _connected = true;
             _lastSeen = DateTime.UtcNow;
+            // # BUG: _pingTimer is null
             _pingTimer = new Timer(SendPing, sock, 0, _pingInterval);
             _pongTimer = new Timer(CheckPongTimeout, null, 0, _pongMaxThreshold);
         }
@@ -52,7 +49,8 @@ namespace Client.Helpers
                 Package.SendCmdPkg((Socket)state, new DarkMsg()
                 {
                     code = CommandCode.COMMAND_PING,
-                    msg = Encoding.UTF8.GetString(BitConverter.GetBytes(DateTime.UtcNow.Ticks))
+                    msg = "",
+                    lastSeen = DateTime.UtcNow
                 });
                 // Adjust heartbeat interval
                 AdjustHeartbeatInterval();

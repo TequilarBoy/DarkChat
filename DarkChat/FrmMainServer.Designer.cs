@@ -39,6 +39,7 @@
             this.colSex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colArea = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colNote = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colLastseen = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lblIP = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
             this.lblPorts = new System.Windows.Forms.Label();
@@ -57,7 +58,7 @@
             this.tabMain.Location = new System.Drawing.Point(0, 0);
             this.tabMain.Name = "tabMain";
             this.tabMain.SelectedIndex = 0;
-            this.tabMain.Size = new System.Drawing.Size(596, 530);
+            this.tabMain.Size = new System.Drawing.Size(720, 530);
             this.tabMain.TabIndex = 7;
             // 
             // tabServer
@@ -73,7 +74,7 @@
             this.tabServer.Location = new System.Drawing.Point(4, 26);
             this.tabServer.Name = "tabServer";
             this.tabServer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabServer.Size = new System.Drawing.Size(588, 500);
+            this.tabServer.Size = new System.Drawing.Size(712, 500);
             this.tabServer.TabIndex = 0;
             this.tabServer.Text = "Server";
             this.tabServer.UseVisualStyleBackColor = true;
@@ -94,7 +95,7 @@
             this.lstLogs.ItemHeight = 17;
             this.lstLogs.Location = new System.Drawing.Point(3, 374);
             this.lstLogs.Name = "lstLogs";
-            this.lstLogs.Size = new System.Drawing.Size(582, 123);
+            this.lstLogs.Size = new System.Drawing.Size(706, 123);
             this.lstLogs.TabIndex = 14;
             // 
             // lsvOnlineClients
@@ -104,13 +105,14 @@
             this.colNickName,
             this.colSex,
             this.colArea,
-            this.colNote});
+            this.colNote,
+            this.colLastseen});
             this.lsvOnlineClients.FullRowSelect = true;
             this.lsvOnlineClients.GridLines = true;
             this.lsvOnlineClients.HideSelection = false;
             this.lsvOnlineClients.Location = new System.Drawing.Point(3, 74);
             this.lsvOnlineClients.Name = "lsvOnlineClients";
-            this.lsvOnlineClients.Size = new System.Drawing.Size(582, 278);
+            this.lsvOnlineClients.Size = new System.Drawing.Size(706, 278);
             this.lsvOnlineClients.TabIndex = 13;
             this.lsvOnlineClients.UseCompatibleStateImageBehavior = false;
             this.lsvOnlineClients.View = System.Windows.Forms.View.Details;
@@ -143,6 +145,11 @@
             this.colNote.Text = "Note";
             this.colNote.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.colNote.Width = 150;
+            // 
+            // colLastseen
+            // 
+            this.colLastseen.Text = "Lastseen";
+            this.colLastseen.Width = 120;
             // 
             // lblIP
             // 
@@ -196,7 +203,7 @@
             this.tabOthers.Location = new System.Drawing.Point(4, 26);
             this.tabOthers.Name = "tabOthers";
             this.tabOthers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOthers.Size = new System.Drawing.Size(588, 500);
+            this.tabOthers.Size = new System.Drawing.Size(712, 500);
             this.tabOthers.TabIndex = 1;
             this.tabOthers.Text = "Others";
             this.tabOthers.UseVisualStyleBackColor = true;
@@ -205,7 +212,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(596, 530);
+            this.ClientSize = new System.Drawing.Size(720, 530);
             this.Controls.Add(this.tabMain);
             this.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -236,6 +243,7 @@
         private System.Windows.Forms.TabPage tabOthers;
         private System.Windows.Forms.ListBox lstLogs;
         private System.Windows.Forms.Label lblLogs;
+        private System.Windows.Forms.ColumnHeader colLastseen;
     }
 }
 

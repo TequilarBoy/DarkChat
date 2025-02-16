@@ -23,113 +23,50 @@ namespace DarkChat
 {
     public partial class FrmMainServer: Form
     {
-        private Thread thrdListen = null;
-        private Socket sockListen = null;
+        private DarkNetwork darkNet;
 
-        private Dictionary<string, Thread> dictHandlers = new Dictionary<string, Thread>();
+        private HeartBeatMgr hearBeat;
 
-        private Dictionary<Socket, ClientInfo> dictClients = new Dictionary<Socket, ClientInfo>();
-
-        private readonly object locker = new object();
+        private ClientsHive hive;
 
         public FrmMainServer()
         {
             InitializeComponent();
+            // Set server version to form
             this.Text = Settings.Version;
             // Subscribe Logger
             Logger.SubLogEvent(UpdateLog);
+            // Initialize heartbeat checking object
+            hearBeat = new HeartBeatMgr();
+            hearBeat.OnHeartbeatClientOffline += ClientOffline;
+            // Initialize network 
+            darkNet = new DarkNetwork(out hive, hearBeat);
+            // Subscribles UI notify events
+            darkNet.OnDrawMsg += DrawMsg;
+            darkNet.OnClientOnline += ClientOnline;
+            darkNet.OnClientOffline += ClientOffline;
         }
 
-        private void ClientHandler(object obj)
+        public void DrawMsg(Socket sock, string msg)
         {
-            Socket sockClient = obj as Socket;
-
-            int recv = 0;
-            long len = 0;
-            byte[] byteslen = new byte[8];
-            byte[] buffer = null;
-            bool running = true;
-
-            while (running)
+            lock (hive.lockerClients)
             {
-                try
-                {
-                    // The length of content
-                    recv = sockClient.Receive(byteslen, byteslen.Length, SocketFlags.None);
-                    len = BitConverter.ToInt64(byteslen, 0);
-                    // Buffer to receive content
-                    buffer = new byte[len];
+                string nickName = hive.dictClients[sock].nickName;
 
-                    if (len > 1000000)
-                    {
-                        // > 1MB read by block
-                        long current = 0;
-                        byte[] clip = new byte[1000000];
-                        using (MemoryStream ms = new MemoryStream(buffer))
-                        {
-                            while (current < len)
-                            {
-                                // Move forward
-                                ms.Seek(current, SeekOrigin.Begin);
-                                // Receive content and write to buffer
-                                recv = sockClient.Receive(clip);
-                                ms.Write(clip, 0, recv);
-                                current += recv;
-                            }
-                            buffer = ms.ToArray();
-                        }
-                    }
-                    else
-                    {
-                        // Receive directly if package if less than 1MB
-                        sockClient.Receive(buffer, (int)len, SocketFlags.None);
-                    }
-                    string strPkg = Encoding.UTF8.GetString(buffer);
-                    DarkMsg darkMsg = JsonConvert.DeserializeObject<DarkMsg>(strPkg);
-
-                    switch (darkMsg.code)
-                    {
-                        case CommandCode.COMMAND_JOIN:
-                            {
-                                ClientOnline(sockClient, darkMsg);
-                                break;
-                            }
-                        case CommandCode.COMMAND_MSG:
-                            {
-                                DrawMsg(sockClient, darkMsg.msg);
-                                break;
-                            }
-                    }
-                }
-                catch (SocketException ex)
+                foreach (var client in hive.dictClients)
                 {
-                    running = false;
-                    ClientOffline(sockClient);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log(ex.Message);
+                    string record = $"{nickName}[{DateTime.UtcNow.ToString("yyyy-MM-dd HH-mm-ss")}]:\n  {msg}";
+                    DarkMsg darkMsg = new DarkMsg()
+                    {
+                        code = CommandCode.TOKEN_MSG,
+                        msg = record
+                    };
+                    Package.SendCmdPkg(client.Key, darkMsg);
                 }
             }
         }
 
-        private void DrawMsg(Socket sock, string msg)
-        {
-            string nickName = dictClients[sock].nickName;
-
-            foreach (var client in dictClients)
-            {
-                string record = $"{nickName}[{DateTime.UtcNow.ToString("yyyy-MM-dd HH-mm-ss")}]:\n  {msg}";
-                DarkMsg darkMsg = new DarkMsg()
-                {
-                    code = CommandCode.TOKEN_MSG,
-                    msg = record
-                };
-                Package.SendCmdPkg(client.Key, darkMsg);
-            }
-        }
-
-        private void ClientOnline(Socket sockClient, DarkMsg darkMsg)
+        public void ClientOnline(Socket sockClient, DarkMsg darkMsg)
         {
             IPEndPoint pt = (IPEndPoint)sockClient.RemoteEndPoint;
 
@@ -154,7 +91,8 @@ namespace DarkChat
             client.SubItems.Add(info.nickName);
             client.SubItems.Add(sex);
             client.SubItems.Add(city);
-            client.SubItems.Add(info.note);
+            client.SubItems.Add(info.note); 
+            client.SubItems.Add(darkMsg.lastSeen.ToString("yyyy-MM-dd HH:mm:ss"));
 
             client.Tag = sockClient;
 
@@ -167,13 +105,18 @@ namespace DarkChat
             else
             {
                 this.lsvOnlineClients.Items.Add(client);
-            } 
-
-            lock (locker)
+            }
+            
+            lock (hive.lockerClients)
             {
                 // Add clients to dictionaries
-                dictHandlers.Add(sockClient.RemoteEndPoint.ToString(), Thread.CurrentThread);
-                dictClients.Add(sockClient, info);
+                hive.dictClients.Add(sockClient, info);
+            }
+
+            lock (hive.lockerHandlers)
+            {
+                // Add client handlers to dictionaries
+                hive.dictHandlers.Add(sockClient.RemoteEndPoint.ToString(), Thread.CurrentThread);
             }
 
             // Sending a reply indicates that the connection is successful
@@ -221,60 +164,41 @@ namespace DarkChat
             Logger.Log($"{clientpt.Address}:{clientpt.Port} leave");
 
             // Remove client from thread dict and client dict
-            lock (locker)
+            lock (hive.lockerClients)
             {
-                dictHandlers.Remove(sockClient.RemoteEndPoint.ToString());
-                dictClients.Remove(sockClient);
+                hive.dictClients.Remove(sockClient);
+            }
+            lock (hive.lockerHandlers)
+            {
+                hive.dictHandlers.Remove(sockClient.RemoteEndPoint.ToString());
             }
         }
         
-        private void ListenHandler()
-        {
-            while (true)
-            {
-                Socket sockClient = null;
-
-                try
-                {
-                    // Blocking, wait for the connection of clients
-                    sockClient = sockListen.Accept();
-
-                    IPEndPoint pt = (IPEndPoint)sockClient.RemoteEndPoint;
-
-                    // Create thread to serve clients
-                    Thread thrdClient = new Thread(new ParameterizedThreadStart(ClientHandler));
-                    thrdClient.IsBackground = true;
-                    thrdClient.Start(sockClient);
-                }
-                catch (Exception ex)
-                {
-
-                }
-            }
-        }
-
         private void btnStart_Click(object sender, EventArgs e)
         {
             try
             {
-                // Check if the format of IP is right or not
-                if (this.txtIP.Text.Length > 0)
+                int port = 0;
+                string ip = this.txtIP.Text.Trim();
+
+                // Check IP
+                if (ip.Length > 0)
                 {
                     string ipv4Pattern = @"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
                     Regex reg = new Regex(ipv4Pattern);
-                    if (!reg.IsMatch(this.txtIP.Text))
+                    if (!reg.IsMatch(ip))
                     {
                         Logger.Log("Enter the correct format server IP address");
                         return;
                     }
                 }
 
-                sockListen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                if (ip.Length <= 0)
+                {
+                    this.txtIP.Text = "0.0.0.0";
+                }
 
-                IPAddress address = (this.txtIP.Text.Length > 0) ? IPAddress.Parse(this.txtIP.Text) : IPAddress.Any;
-
-                int port = 0;
-
+                // Check port
                 if (this.txtPort.Text.Length <= 0)
                 {
                     port = new Random().Next(1025, ushort.MaxValue);
@@ -287,23 +211,8 @@ namespace DarkChat
                     return;
                 }
 
-                IPEndPoint endPoint = new IPEndPoint(address, port);
-
-                sockListen.Bind(endPoint);
-
-                sockListen.Listen(999999);
-
-                if (this.txtIP.Text.Length <= 0)
-                {
-                    this.txtIP.Text = address.ToString();
-                }
-
-                Logger.Log($"Server is starting, listen on: {address}:{port}");
-
-                // Start the thread of handling clients
-                thrdListen = new Thread(ListenHandler);
-                thrdListen.IsBackground = true;
-                thrdListen.Start();
+                // Start the server
+                darkNet.StartServer(ip, port);
             }
             catch (Exception ex)
             {

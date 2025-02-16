@@ -16,6 +16,7 @@ namespace DarkClient.Unit
     public class DarkMsg
     {
         public CommandCode code { get; set; }
+        public DateTime lastSeen { get; set; }
         public string msg { get; set; }
     }
     public class ClientInfo
@@ -24,5 +25,6 @@ namespace DarkClient.Unit
         public Sex gender { get; set; }
         public string area { get; set; }
         public string note { get; set; }
+        public DateTime lastSeen { get; set; }
     }
 }

@@ -8,6 +8,6 @@ namespace Client
 {
     public static class Settings
     {
-        public static string Version = "DarkChat v1.0.0.0";
+        public static string Version = "DarkChat v1.1.0";
     }
 }

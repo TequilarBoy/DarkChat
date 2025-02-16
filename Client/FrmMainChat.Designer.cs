@@ -34,7 +34,7 @@
             this.picLogo = new System.Windows.Forms.PictureBox();
             this.btnMinimum = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblTitle = new System.Windows.Forms.Label();
             this.txtIP = new System.Windows.Forms.TextBox();
             this.txtPort = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -88,7 +88,7 @@
             this.plTitle.Controls.Add(this.picLogo);
             this.plTitle.Controls.Add(this.btnMinimum);
             this.plTitle.Controls.Add(this.btnClose);
-            this.plTitle.Controls.Add(this.label2);
+            this.plTitle.Controls.Add(this.lblTitle);
             this.plTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.plTitle.Location = new System.Drawing.Point(0, 0);
             this.plTitle.Name = "plTitle";
@@ -132,16 +132,16 @@
             this.btnClose.UseVisualStyleBackColor = false;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
-            // label2
+            // lblTitle
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label2.Location = new System.Drawing.Point(26, 4);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 21);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "DarkChat";
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTitle.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.lblTitle.Location = new System.Drawing.Point(26, 4);
+            this.lblTitle.Name = "lblTitle";
+            this.lblTitle.Size = new System.Drawing.Size(82, 21);
+            this.lblTitle.TabIndex = 4;
+            this.lblTitle.Text = "DarkChat";
             // 
             // txtIP
             // 
@@ -285,7 +285,7 @@
             // rdFemale
             // 
             this.rdFemale.AutoSize = true;
-            this.rdFemale.Location = new System.Drawing.Point(123, 54);
+            this.rdFemale.Location = new System.Drawing.Point(132, 54);
             this.rdFemale.Name = "rdFemale";
             this.rdFemale.Size = new System.Drawing.Size(67, 21);
             this.rdFemale.TabIndex = 4;
@@ -411,10 +411,13 @@
             this.Controls.Add(this.plTitle);
             this.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "FrmMainChat";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "DarkChat";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmMainChat_KeyDown);
             this.plTitle.ResumeLayout(false);
             this.plTitle.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
@@ -438,7 +441,7 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel plTitle;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.TextBox txtIP;
         private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Label label3;

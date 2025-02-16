@@ -22,6 +22,7 @@ namespace Client
         public FrmMainChat()
         {
             InitializeComponent();
+            this.lblTitle.Text = Settings.Version;
             this.tlItemOnline.Text = "Status: Offline";
             this.tlItemOnline.ForeColor = Color.Red;
             Logger.SubLogger(Log);
@@ -42,8 +43,6 @@ namespace Client
                 this.lstLogs.Items.Add(log);
             }
         }
-
-        
 
         private void btnConn_Click(object sender, EventArgs e)
         {
@@ -179,6 +178,11 @@ namespace Client
                             }
                             break;
                         }
+                    case CommandCode.TOKEN_PONG:
+                        {
+                            HeartBeatMgr.ReceivePong(darkMsg.lastSeen);
+                            break;
+                        }
                 }
             }
         }
@@ -256,7 +260,8 @@ namespace Client
             DarkMsg darkMsg = new DarkMsg()
             {
                 code = code,
-                msg = strInfo
+                msg = strInfo,
+                lastSeen = DateTime.UtcNow
             };
 
             return darkMsg;
@@ -275,7 +280,8 @@ namespace Client
             DarkMsg msgInfo = new DarkMsg()
             {
                 code = CommandCode.COMMAND_MSG,
-                msg = strMsg
+                msg = strMsg,
+                lastSeen = DateTime.UtcNow
             };
             
             // Send chatting msg package
@@ -325,6 +331,19 @@ namespace Client
                     Native.ReleaseCapture();
 
                     Native.SendMessage(this.Handle, Native.WM_NCLBUTTONDOWN, (IntPtr)Native.HT_CAPTION, IntPtr.Zero);
+                }
+            }
+        }
+
+        private void FrmMainChat_KeyDown(object sender, KeyEventArgs e)
+        {
+            int index = this.tabMain.SelectedIndex;
+            if (1 == index)
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    e.SuppressKeyPress = true;
+                    this.btnSend_Click(sender, e);
                 }
             }
         }

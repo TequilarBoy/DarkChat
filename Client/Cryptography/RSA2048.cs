@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DarkChat
+namespace Client.Cryptography
 {
-    public static class Settings
+    public static class RSA2048
     {
-        public static string Version = "DarkChat Server v1.1.0";
+        
     }
 }
