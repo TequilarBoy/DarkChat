@@ -4,6 +4,7 @@ using System;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Client.Helpers
 {
@@ -39,12 +40,14 @@ namespace Client.Helpers
                 _pingTimer.Dispose();
                 _pongTimer.Dispose();
             }
+            Debug.WriteLine($"Heartbeat stopped: {DateTime.UtcNow.ToString("HH:mm:ss")}");
         }
 
         private static void SendPing(object state)
         {
             if (_connected)
             {
+                Debug.WriteLine($"Send ping: {DateTime.UtcNow.ToString("HH:mm:ss")}");
                 // Send heartbeat
                 Package.SendCmdPkg((Socket)state, new DarkMsg()
                 {
@@ -76,6 +79,7 @@ namespace Client.Helpers
         private static bool HandlePongTimeout()
         {
             // Timeout, try to reconnect
+            Debug.WriteLine($"Send ping failed(disconnect): {DateTime.UtcNow.ToString("HH:mm:ss")}");
             _connected = false;
             return _connected;
         }
@@ -85,6 +89,7 @@ namespace Client.Helpers
             // Update pong(lastseen)
             lock (_lastSeenLock)
             {
+                Debug.WriteLine($"Pong back: {pongReceive.ToString("HH:mm:ss")}");
                 _lastSeen = pongReceive;
             }
         }
@@ -97,10 +102,12 @@ namespace Client.Helpers
                 // is within the range of _pingThreshold±5
                 if ((DateTime.UtcNow - _lastSeen).TotalMilliseconds > _pongThreshold)
                 {
+                    Debug.WriteLine($"Ping interval UP = {(_pingInterval + 5000) / 1000}");
                     _pingInterval = Math.Min(_pingInterval + 5000, _pingMaxInterval);
                 }
                 else
                 {
+                    Debug.WriteLine($"Ping interval DOWN = {(_pingInterval - 5000) / 1000}");
                     _pingInterval = Math.Max(_pingInterval - 5000, _pingMinInterval);
                 }
             }

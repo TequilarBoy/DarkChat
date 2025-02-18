@@ -31,8 +31,8 @@ namespace DarkChat.Helpers
                     if (!_connected)
                     {
                         _pongInterval = (pongInterval > 0) ? pongInterval : defaultInterval;
-                        _pongTimer = new Timer(CheckOnlineClients, ClientsHive.GetHive, 0, _pongInterval);
                         _connected = true;
+                        _pongTimer = new Timer(CheckOnlineClients, ClientsHive.GetHive, 0, _pongInterval);
                     }
                 }
                 

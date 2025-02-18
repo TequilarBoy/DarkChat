@@ -25,6 +25,8 @@ namespace Client
             this.lblTitle.Text = Settings.Version;
             this.tlItemOnline.Text = "Status: Offline";
             this.tlItemOnline.ForeColor = Color.Red;
+            this.rdMale.Checked = true;
+
             Logger.SubLogger(Log);
         }
 
@@ -76,6 +78,12 @@ namespace Client
                 else
                 {
                     Logger.Log("Please input server port");
+                    return;
+                }
+
+                if (this.txtName.Text.Length <= 0)
+                {
+                    MessageBox.Show("You must input a name.");
                     return;
                 }
                 
