@@ -18,6 +18,7 @@ using System.IO;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using DarkClient.Unit;
+using Test;
 
 namespace DarkChat
 {
@@ -29,11 +30,16 @@ namespace DarkChat
 
         private ClientsHive hive;
 
+        private RsaUtils rsa;
+
         public FrmMainServer()
         {
             InitializeComponent();
             // Set server version to form
             this.Text = Settings.Version;
+            this.btnGen.Enabled = false;
+            this.lblBindStatus.ForeColor = Color.Red;
+
             // Subscribe Logger
             Logger.SubLogEvent(UpdateLog);
             // Initialize heartbeat checking object
@@ -41,6 +47,8 @@ namespace DarkChat
             hearBeat.OnHeartbeatClientOffline += ClientOffline;
             // Initialize network 
             darkNet = new DarkNetwork(out hive, hearBeat);
+            // Initialize cryptography object
+            rsa = new RsaUtils();
             // Subscribles UI notify events
             darkNet.OnDrawMsg += DrawMsg;
             darkNet.OnClientOnline += ClientOnline;
@@ -230,6 +238,111 @@ namespace DarkChat
             else
             {
                 this.lstLogs.Items.Add($"{DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")}: {msg}");
+            }
+        }
+
+        private void benBrowse_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog dlg = new FolderBrowserDialog())
+            {
+                if (DialogResult.OK == dlg.ShowDialog())
+                {
+                    this.txtKeysPath.Text = dlg.SelectedPath;
+                    this.btnGen.Enabled = true;
+                }
+            }
+        }
+
+        private void txtKeysPath_TextChanged(object sender, EventArgs e)
+        {
+            TextBox txtKeysPath = (TextBox)sender;
+
+            if (!Directory.Exists(txtKeysPath.Text))
+            {
+                this.txtKeysPath.Text = "";
+                this.btnGen.Enabled = false;
+                this.benBrowse.Focus();
+            }
+        }
+
+        private void btnGen_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<string> lstKeys = rsa.Pkcs1Key(2048, true);
+                string priKeyPath = string.Format(@"{0}\private.pem", this.txtKeysPath.Text);
+                string pubKeyPath = string.Format(@"{0}\public.pem", this.txtKeysPath.Text);
+                
+                using (StreamWriter writer = new StreamWriter(priKeyPath))
+                {
+                    writer.Write(lstKeys[1]);
+                    writer.Flush();
+                }
+
+                using (StreamWriter writer = new StreamWriter(pubKeyPath))
+                {
+                    writer.Write(lstKeys[0]);
+                    writer.Flush();
+                }
+
+                MessageBox.Show("Generate the key pairs successfully");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to create key pairs", "Error");   
+            }
+        }
+
+        private void btnPriBrowse_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dlg = new OpenFileDialog())
+            {
+                dlg.InitialDirectory = Environment.CurrentDirectory;
+                dlg.Filter = "Pem Files (.pem)|*.pem";
+
+                if (DialogResult.OK == dlg.ShowDialog())
+                {
+                    this.txtPriKeyPath.Text = dlg.FileName;
+                }
+            }
+        }
+
+        private void btnBindPriKey_Click(object sender, EventArgs e)
+        {
+            string priKeyPath = this.txtPriKeyPath.Text.Trim();
+
+            if (this.btnBindPriKey.Text == "Bind")
+            {
+                if (string.IsNullOrEmpty(priKeyPath))
+                {
+                    MessageBox.Show("Choosing private key path first", "Error");
+                    return;
+                }
+
+                if (!File.Exists(priKeyPath))
+                {
+                    MessageBox.Show("Private key file doesn't exist, create keys pair firstly", "Error");
+                    return;
+                }
+                this.lblBindStatus.Text = "Status: Bind";
+                this.lblBindStatus.ForeColor = Color.Green;
+
+                this.btnBindPriKey.Text = "Unbind";
+
+                // Check if private key's format is right or not 
+                Settings.PrivKey = IO.ReadTextFile(priKeyPath);
+                MessageBox.Show("Bind private key successfully!", "Success", MessageBoxButtons.OK);
+            }
+            else
+            {
+                this.lblBindStatus.Text = "Status: Unbind";
+                this.lblBindStatus.ForeColor = Color.Red;
+
+                this.btnBindPriKey.Text = "Bind";
+
+                Settings.PrivKey = "";
+
+                MessageBox.Show("Unbind private key successfully!", "Success", MessageBoxButtons.OK);
             }
         }
     }

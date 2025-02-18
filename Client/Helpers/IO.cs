@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Client.Cryptography
+namespace Client.Helpers
 {
-    public static class RSA2048
+    class IO
     {
-        
+
     }
 }

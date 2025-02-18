@@ -39,6 +39,9 @@
     <ApplicationIcon>logo.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="MaxMind.Db, Version=4.0.0.0, Culture=neutral, PublicKeyToken=66afa4cc5ae853ac, processorArchitecture=MSIL">
       <HintPath>..\packages\MaxMind.Db.4.1.0\lib\netstandard2.0\MaxMind.Db.dll</HintPath>
     </Reference>
@@ -99,6 +102,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cryptography\AES256.cs" />
+    <Compile Include="Cryptography\RsaUtils.cs" />
+    <Compile Include="Cryptography\SHA.cs" />
     <Compile Include="FrmMainServer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -108,6 +114,7 @@
     <Compile Include="Helpers\DarkNetwork.cs" />
     <Compile Include="Helpers\GeoLocate.cs" />
     <Compile Include="Helpers\HeartBeatMgr.cs" />
+    <Compile Include="Helpers\IO.cs" />
     <Compile Include="Helpers\Logger.cs" />
     <Compile Include="Helpers\Package.cs" />
     <Compile Include="Program.cs" />
@@ -146,9 +153,7 @@
     <Content Include="logo.ico" />
     <Content Include="Resources\logo.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Cryptography\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -60,7 +60,6 @@
             this.tabOnline = new System.Windows.Forms.TabPage();
             this.tlStatus = new System.Windows.Forms.StatusStrip();
             this.tlItemOnline = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tlItemPing = new System.Windows.Forms.ToolStripStatusLabel();
             this.plTitle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             this.tabMain.SuspendLayout();
@@ -78,7 +77,7 @@
             this.label1.Location = new System.Drawing.Point(19, 25);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 17);
+            this.label1.Size = new System.Drawing.Size(88, 24);
             this.label1.TabIndex = 0;
             this.label1.Text = "Server IP:";
             // 
@@ -139,7 +138,7 @@
             this.lblTitle.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.lblTitle.Location = new System.Drawing.Point(26, 4);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(82, 21);
+            this.lblTitle.Size = new System.Drawing.Size(120, 31);
             this.lblTitle.TabIndex = 4;
             this.lblTitle.Text = "DarkChat";
             // 
@@ -147,7 +146,7 @@
             // 
             this.txtIP.Location = new System.Drawing.Point(88, 22);
             this.txtIP.Name = "txtIP";
-            this.txtIP.Size = new System.Drawing.Size(175, 23);
+            this.txtIP.Size = new System.Drawing.Size(175, 30);
             this.txtIP.TabIndex = 2;
             this.txtIP.Text = "192.168.2.27";
             // 
@@ -155,7 +154,7 @@
             // 
             this.txtPort.Location = new System.Drawing.Point(88, 54);
             this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(175, 23);
+            this.txtPort.Size = new System.Drawing.Size(175, 30);
             this.txtPort.TabIndex = 4;
             // 
             // label3
@@ -164,7 +163,7 @@
             this.label3.Location = new System.Drawing.Point(5, 57);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(77, 17);
+            this.label3.Size = new System.Drawing.Size(109, 24);
             this.label3.TabIndex = 3;
             this.label3.Text = "Server port:";
             // 
@@ -195,10 +194,10 @@
             this.tabConfig.Controls.Add(this.grpLog);
             this.tabConfig.Controls.Add(this.grpServer);
             this.tabConfig.Controls.Add(this.grpSelfConfig);
-            this.tabConfig.Location = new System.Drawing.Point(4, 26);
+            this.tabConfig.Location = new System.Drawing.Point(4, 33);
             this.tabConfig.Name = "tabConfig";
             this.tabConfig.Padding = new System.Windows.Forms.Padding(3);
-            this.tabConfig.Size = new System.Drawing.Size(698, 390);
+            this.tabConfig.Size = new System.Drawing.Size(698, 383);
             this.tabConfig.TabIndex = 0;
             this.tabConfig.Text = "Config";
             this.tabConfig.UseVisualStyleBackColor = true;
@@ -217,10 +216,10 @@
             // 
             this.lstLogs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstLogs.FormattingEnabled = true;
-            this.lstLogs.ItemHeight = 17;
-            this.lstLogs.Location = new System.Drawing.Point(3, 19);
+            this.lstLogs.ItemHeight = 24;
+            this.lstLogs.Location = new System.Drawing.Point(3, 26);
             this.lstLogs.Name = "lstLogs";
-            this.lstLogs.Size = new System.Drawing.Size(376, 329);
+            this.lstLogs.Size = new System.Drawing.Size(376, 322);
             this.lstLogs.TabIndex = 0;
             // 
             // grpServer
@@ -267,7 +266,7 @@
             this.lblSig.AutoSize = true;
             this.lblSig.Location = new System.Drawing.Point(19, 83);
             this.lblSig.Name = "lblSig";
-            this.lblSig.Size = new System.Drawing.Size(40, 17);
+            this.lblSig.Size = new System.Drawing.Size(57, 24);
             this.lblSig.TabIndex = 6;
             this.lblSig.Text = "Note:";
             // 
@@ -276,7 +275,7 @@
             this.rdUnknown.AutoSize = true;
             this.rdUnknown.Location = new System.Drawing.Point(215, 54);
             this.rdUnknown.Name = "rdUnknown";
-            this.rdUnknown.Size = new System.Drawing.Size(54, 21);
+            this.rdUnknown.Size = new System.Drawing.Size(79, 28);
             this.rdUnknown.TabIndex = 5;
             this.rdUnknown.TabStop = true;
             this.rdUnknown.Text = "Alien";
@@ -287,7 +286,7 @@
             this.rdFemale.AutoSize = true;
             this.rdFemale.Location = new System.Drawing.Point(132, 54);
             this.rdFemale.Name = "rdFemale";
-            this.rdFemale.Size = new System.Drawing.Size(67, 21);
+            this.rdFemale.Size = new System.Drawing.Size(97, 28);
             this.rdFemale.TabIndex = 4;
             this.rdFemale.TabStop = true;
             this.rdFemale.Text = "Female";
@@ -298,7 +297,7 @@
             this.rdMale.AutoSize = true;
             this.rdMale.Location = new System.Drawing.Point(62, 54);
             this.rdMale.Name = "rdMale";
-            this.rdMale.Size = new System.Drawing.Size(55, 21);
+            this.rdMale.Size = new System.Drawing.Size(78, 28);
             this.rdMale.TabIndex = 3;
             this.rdMale.TabStop = true;
             this.rdMale.Text = "Male";
@@ -309,7 +308,7 @@
             this.lblSex.AutoSize = true;
             this.lblSex.Location = new System.Drawing.Point(25, 54);
             this.lblSex.Name = "lblSex";
-            this.lblSex.Size = new System.Drawing.Size(31, 17);
+            this.lblSex.Size = new System.Drawing.Size(43, 24);
             this.lblSex.TabIndex = 2;
             this.lblSex.Text = "Sex:";
             // 
@@ -317,7 +316,7 @@
             // 
             this.txtName.Location = new System.Drawing.Point(62, 27);
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(207, 23);
+            this.txtName.Size = new System.Drawing.Size(207, 30);
             this.txtName.TabIndex = 1;
             // 
             // lblNickName
@@ -325,7 +324,7 @@
             this.lblNickName.AutoSize = true;
             this.lblNickName.Location = new System.Drawing.Point(12, 30);
             this.lblNickName.Name = "lblNickName";
-            this.lblNickName.Size = new System.Drawing.Size(46, 17);
+            this.lblNickName.Size = new System.Drawing.Size(66, 24);
             this.lblNickName.TabIndex = 0;
             this.lblNickName.Text = "Name:";
             // 
@@ -334,10 +333,10 @@
             this.tabTalk.Controls.Add(this.btnSend);
             this.tabTalk.Controls.Add(this.txtChat);
             this.tabTalk.Controls.Add(this.lstTalkRecord);
-            this.tabTalk.Location = new System.Drawing.Point(4, 26);
+            this.tabTalk.Location = new System.Drawing.Point(4, 33);
             this.tabTalk.Name = "tabTalk";
             this.tabTalk.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTalk.Size = new System.Drawing.Size(698, 390);
+            this.tabTalk.Size = new System.Drawing.Size(698, 383);
             this.tabTalk.TabIndex = 1;
             this.tabTalk.Text = "Chat";
             this.tabTalk.UseVisualStyleBackColor = true;
@@ -363,47 +362,41 @@
             // lstTalkRecord
             // 
             this.lstTalkRecord.FormattingEnabled = true;
-            this.lstTalkRecord.ItemHeight = 17;
+            this.lstTalkRecord.ItemHeight = 24;
             this.lstTalkRecord.Location = new System.Drawing.Point(8, 9);
             this.lstTalkRecord.Name = "lstTalkRecord";
-            this.lstTalkRecord.Size = new System.Drawing.Size(682, 276);
+            this.lstTalkRecord.Size = new System.Drawing.Size(682, 268);
             this.lstTalkRecord.TabIndex = 0;
             // 
             // tabOnline
             // 
-            this.tabOnline.Location = new System.Drawing.Point(4, 26);
+            this.tabOnline.Location = new System.Drawing.Point(4, 33);
             this.tabOnline.Name = "tabOnline";
             this.tabOnline.Padding = new System.Windows.Forms.Padding(3);
-            this.tabOnline.Size = new System.Drawing.Size(698, 390);
+            this.tabOnline.Size = new System.Drawing.Size(698, 383);
             this.tabOnline.TabIndex = 2;
             this.tabOnline.Text = "Room";
             this.tabOnline.UseVisualStyleBackColor = true;
             // 
             // tlStatus
             // 
+            this.tlStatus.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.tlStatus.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tlItemOnline,
-            this.tlItemPing});
-            this.tlStatus.Location = new System.Drawing.Point(0, 428);
+            this.tlItemOnline});
+            this.tlStatus.Location = new System.Drawing.Point(0, 418);
             this.tlStatus.Name = "tlStatus";
-            this.tlStatus.Size = new System.Drawing.Size(706, 22);
+            this.tlStatus.Size = new System.Drawing.Size(706, 32);
             this.tlStatus.TabIndex = 7;
             // 
             // tlItemOnline
             // 
             this.tlItemOnline.Name = "tlItemOnline";
-            this.tlItemOnline.Size = new System.Drawing.Size(81, 17);
+            this.tlItemOnline.Size = new System.Drawing.Size(122, 25);
             this.tlItemOnline.Text = "Status: Offline";
-            // 
-            // tlItemPing
-            // 
-            this.tlItemPing.Name = "tlItemPing";
-            this.tlItemPing.Size = new System.Drawing.Size(59, 17);
-            this.tlItemPing.Text = "Ping: 0ms";
             // 
             // FrmMainChat
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(706, 450);
             this.Controls.Add(this.tlStatus);
@@ -451,7 +444,6 @@
         private System.Windows.Forms.TabPage tabTalk;
         private System.Windows.Forms.StatusStrip tlStatus;
         private System.Windows.Forms.ToolStripStatusLabel tlItemOnline;
-        private System.Windows.Forms.ToolStripStatusLabel tlItemPing;
         private System.Windows.Forms.GroupBox grpSelfConfig;
         private System.Windows.Forms.TextBox txtNote;
         private System.Windows.Forms.Label lblSig;

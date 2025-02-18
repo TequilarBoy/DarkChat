@@ -9,5 +9,6 @@ namespace DarkChat
     public static class Settings
     {
         public static string Version = "DarkChat Server v1.1.0";
+        public static string PrivKey = "";
     }
 }
