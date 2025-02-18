@@ -1,6 +1,7 @@
-# DarkChat v1.0.0
-![DarkChat v1.0.0](Images/clip.png)
+# DarkChat
+![DarkChat](Images/clip.png)
 	A safe chatting to aim at chatting anonymously which written by C#. It uses AES+RSA and random key to encrypt message end to end. (Still in dev, not finished yet)<br/>
+	<br/>
 	1. You can set your own custom profile in the chat.<br/>
 	2. Use AES256-GCM+RSA2048 and digital signature to encrypt the message end to end.<br/>
 	3. It supports private chatting.<br/>
