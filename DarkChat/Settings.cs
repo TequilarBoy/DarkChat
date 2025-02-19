@@ -3,16 +3,13 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace DarkChat
 {
     public static class Settings
     {
-        public static string Version { private set; get; } = "v1.2.0";
+        public static string Version { private set; get; } = "v1.3.2";
         // Private key content
         public static string privKey { set; get; } = "";
         // Default private key path

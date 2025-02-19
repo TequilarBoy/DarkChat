@@ -37,8 +37,8 @@ namespace Client.Helpers
             if (_connected)
             {
                 _connected = false;
-                _pingTimer.Dispose();
-                _pongTimer.Dispose();
+                _pingTimer?.Dispose();
+                _pongTimer?.Dispose();
             }
             Debug.WriteLine($"Heartbeat stopped: {DateTime.UtcNow.ToString("HH:mm:ss")}");
         }
