@@ -36,12 +36,15 @@ namespace DarkChat
         {
             InitializeComponent();
             // Set server version to form
-            this.Text = Settings.Version;
+            this.Text = "DarkChat Server " + Settings.Version;
             this.btnGen.Enabled = false;
             this.lblBindStatus.ForeColor = Color.Red;
 
             // Subscribe Logger
             Logger.SubLogEvent(UpdateLog);
+            // Load config first
+            Settings.OnSettingLoadUINotify += SettingLoadUINotify;
+            Settings.ReadSettings(null);
             // Initialize heartbeat checking object
             hearBeat = new HeartBeatMgr();
             hearBeat.OnHeartbeatClientOffline += ClientOffline;
@@ -53,17 +56,21 @@ namespace DarkChat
             darkNet.OnDrawMsg += DrawMsg;
             darkNet.OnClientOnline += ClientOnline;
             darkNet.OnClientOffline += ClientOffline;
+            darkNet.OnUpdateLastseen += UpdateLastseen;
         }
 
         public void DrawMsg(Socket sock, string msg)
         {
+            DateTime lastSeen = DateTime.UtcNow;
+            UpdateLastseen(sock, lastSeen);
+
             lock (hive.lockerClients)
             {
                 string nickName = hive.dictClients[sock].nickName;
 
                 foreach (var client in hive.dictClients)
                 {
-                    string record = $"{nickName}[{DateTime.UtcNow.ToString("yyyy-MM-dd HH-mm-ss")}]:\n  {msg}";
+                    string record = $"{nickName}[{lastSeen.ToString("yyyy-MM-dd HH-mm-ss")}]:\n  {msg}";
                     DarkMsg darkMsg = new DarkMsg()
                     {
                         code = CommandCode.TOKEN_MSG,
@@ -74,6 +81,194 @@ namespace DarkChat
             }
         }
 
+        public void SettingLoadUINotify(bool loadok)
+        {
+            if (this.lblBindStatus.InvokeRequired)
+            {
+                this.lblBindStatus.Invoke(new Action(() =>
+                {
+                    if (loadok)
+                    {
+                        this.lblBindStatus.Text = "Status: Bind";
+                        this.lblBindStatus.ForeColor = Color.Green;
+                    }
+                    else
+                    {
+                        this.lblBindStatus.Text = "Status: Unbind";
+                        this.lblBindStatus.ForeColor = Color.Red;
+                    } 
+                }));
+            }
+            else
+            {
+                if (loadok)
+                {
+                    this.lblBindStatus.Text = "Status: Bind";
+                    this.lblBindStatus.ForeColor = Color.Green;
+                }
+                else
+                {
+                    this.lblBindStatus.Text = "Status: Unbind";
+                    this.lblBindStatus.ForeColor = Color.Red;
+                }
+            }
+
+            if (this.txtPriKeyPath.InvokeRequired)
+            {
+                this.txtPriKeyPath.Invoke(new Action(() =>
+                {
+                    if (loadok)
+                    {
+                        this.txtPriKeyPath.Text = Settings.keyPath;
+                    }
+                    else
+                    {
+                        this.txtPriKeyPath.Text = "";
+                    }
+                }));
+            }
+            else
+            {
+                if (loadok)
+                {
+                    this.txtPriKeyPath.Text = Settings.keyPath;
+                }
+                else
+                {
+                    this.txtPriKeyPath.Text = "";
+                }
+            }
+
+            if (this.lblCurDefPriKeyPath.InvokeRequired)
+            {
+                this.lblCurDefPriKeyPath.Invoke(new Action(() =>
+                {
+                    if (loadok)
+                    {
+                        this.lblCurDefPriKeyPath.Text = "Default Private Key Path: " + Settings.keyPath;
+                    }
+                    else
+                    {
+                        this.lblCurDefPriKeyPath.Text = "Default Private Key Path: None";
+                    }
+                }));
+            }
+            else
+            {
+                if (loadok)
+                {
+                    this.lblCurDefPriKeyPath.Text = "Default Private Key Path: " + Settings.keyPath;
+                }
+                else
+                {
+                    this.lblCurDefPriKeyPath.Text = "Default Private Key Path: None";
+                }
+            }
+
+            if (this.lblCurDefIP.InvokeRequired)
+            {
+                this.lblCurDefIP.Invoke(new Action(() =>
+                {
+                    if (loadok)
+                    {
+                        this.lblCurDefIP.Text = "Default IP: " + Settings.ip;
+                    }
+                    else
+                    {
+                        this.lblCurDefIP.Text = "Default IP: None";
+                    }
+                }));
+            }
+            else
+            {
+                if (loadok)
+                {
+                    this.lblCurDefIP.Text = "Default IP: " + Settings.ip;
+                }
+                else
+                {
+                    this.lblCurDefIP.Text = "Default IP: None";
+                }
+            }
+
+            if (this.lblCurDefPort.InvokeRequired)
+            {
+                this.lblCurDefPort.Invoke(new Action(() =>
+                {
+                    if (loadok)
+                    {
+                        this.lblCurDefPort.Text = "Default Port: " + Settings.port;
+                    }
+                    else
+                    {
+                        this.lblCurDefPort.Text = "Default Port: None";
+                    }
+                }));
+            }
+            else
+            {
+                if (loadok)
+                {
+                    this.lblCurDefPort.Text = "Default Port: " + Settings.port;
+                }
+                else
+                {
+                    this.lblCurDefPort.Text = "Default Port: None";
+                }
+            }
+
+            if (this.lblCurDefAutoStartup.InvokeRequired)
+            {
+                this.lblCurDefAutoStartup.Invoke(new Action(() =>
+                {
+                    if (loadok)
+                    {
+                        this.lblCurDefAutoStartup.Text = "Autostartup: " + (Settings.autoStart ? "Yes" : "No");
+                    }
+                    else
+                    {
+                        this.lblCurDefAutoStartup.Text = "Autostartup: No";
+                    }
+                }));
+            }
+            else
+            {
+                if (loadok)
+                {
+                    this.lblCurDefAutoStartup.Text = "Autostartup: " + (Settings.autoStart ? "Yes" : "No");
+                }
+                else
+                {
+                    this.lblCurDefAutoStartup.Text = "Autostartup: No";
+                }
+            }
+
+            if (this.lblCurDefSingleton.InvokeRequired)
+            {
+                this.lblCurDefSingleton.Invoke(new Action(() =>
+                {
+                    if (loadok)
+                    {
+                        this.lblCurDefSingleton.Text = "Single Mode: " + (Settings.singleServer ? "Yes" : "No");
+                    }
+                    else
+                    {
+                        this.lblCurDefSingleton.Text = "Single Mode: No";
+                    }
+                }));
+            }
+            else
+            {
+                if (loadok)
+                {
+                    this.lblCurDefSingleton.Text = "Single Mode: " + (Settings.singleServer ? "Yes" : "No");
+                }
+                else
+                {
+                    this.lblCurDefSingleton.Text = "Single Mode: No";
+                }
+            }
+        }
         public void ClientOnline(Socket sockClient, DarkMsg darkMsg)
         {
             IPEndPoint pt = (IPEndPoint)sockClient.RemoteEndPoint;
@@ -100,7 +295,7 @@ namespace DarkChat
             client.SubItems.Add(sex);
             client.SubItems.Add(city);
             client.SubItems.Add(info.note); 
-            client.SubItems.Add(darkMsg.lastSeen.ToString("yyyy-MM-dd HH:mm:ss"));
+            client.SubItems.Add(darkMsg.lastSeen.ToString("HH:mm:ss"));
 
             client.Tag = sockClient;
 
@@ -201,11 +396,6 @@ namespace DarkChat
                     }
                 }
 
-                if (ip.Length <= 0)
-                {
-                    this.txtIP.Text = "0.0.0.0";
-                }
-
                 // Check port
                 if (this.txtPort.Text.Length <= 0)
                 {
@@ -227,6 +417,40 @@ namespace DarkChat
                 Debug.WriteLine($"{ex.Message}");
             }
             
+        }
+
+        private void UpdateLastseen(Socket sockClient, DateTime lastSeen)
+        {
+            // Update UI,  the lastseen segment of listview
+            if (this.lsvOnlineClients.InvokeRequired)
+            {
+                this.lsvOnlineClients.Invoke(new Action(() =>
+                {
+                    foreach (ListViewItem item in this.lsvOnlineClients.Items)
+                    {
+                        if (item.Tag == sockClient)
+                        {
+                            item.SubItems[5].Text = lastSeen.ToString("HH:mm:ss");
+                        }
+                    }
+                }));
+            }
+            else
+            {
+                foreach (ListViewItem item in this.lsvOnlineClients.Items)
+                {
+                    if (item.Tag == sockClient)
+                    {
+                        item.SubItems[5].Text = lastSeen.ToString("HH:mm:ss");
+                    }
+                }
+            }
+
+            // Update the content in dictionary
+            lock (hive.lockerClients)
+            {
+                hive.dictClients[sockClient].lastSeen = lastSeen;
+            }
         }
 
         private void UpdateLog(string msg)
@@ -330,7 +554,7 @@ namespace DarkChat
                 this.btnBindPriKey.Text = "Unbind";
 
                 // Check if private key's format is right or not 
-                Settings.PrivKey = IO.ReadTextFile(priKeyPath);
+                Settings.privKey = IO.ReadTextFile(priKeyPath);
                 MessageBox.Show("Bind private key successfully!", "Success", MessageBoxButtons.OK);
             }
             else
@@ -340,10 +564,76 @@ namespace DarkChat
 
                 this.btnBindPriKey.Text = "Bind";
 
-                Settings.PrivKey = "";
+                Settings.privKey = "";
 
                 MessageBox.Show("Unbind private key successfully!", "Success", MessageBoxButtons.OK);
             }
+        }
+
+        private void btnDefBrowse_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dlg = new OpenFileDialog())
+            {
+                dlg.InitialDirectory = Environment.CurrentDirectory;
+                dlg.Filter = "Private key file(*.pem)|*.pem;";
+                dlg.Multiselect = false;
+                if (DialogResult.OK == dlg.ShowDialog())
+                {
+                    this.txtDefPriKeyPath.Text = dlg.FileName;
+                }
+            }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            // Check if the format of IP is right
+            string ipv4Pattern = @"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            string ip = this.txtDefIP.Text.Trim();
+            Regex reg = new Regex(ipv4Pattern);
+            if (!reg.IsMatch(ip))
+            {
+                MessageBox.Show("Please input correct IP format", "Error", MessageBoxButtons.OK);
+                return;
+            }
+
+            // Check if the format of port is right
+            int port = 0;
+            string sport = this.txtDefPort.Text;
+            if (sport.Length > 0)
+            {
+                if (!int.TryParse(sport, out port) || (port < 0 || port > 65535))
+                {
+                    MessageBox.Show("Port can only range from 0 to 65535", "Error", MessageBoxButtons.OK);
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please input the right server port", "Error", MessageBoxButtons.OK);
+                return;
+            }
+
+            // Check private key
+            string pemPath = this.txtDefPriKeyPath.Text;
+            if (!File.Exists(pemPath))
+            {
+                MessageBox.Show("Private key file doesn't exist", "Error", MessageBoxButtons.OK);
+                return;
+            }
+
+            bool autoStartup = this.chkAutostartup.Checked;
+            bool singleton = this.chkSingleton.Checked;
+            // Read private key content
+            string privateKey = IO.ReadTextFile(pemPath);
+
+            Settings.autoStart = autoStartup;
+            Settings.singleServer = singleton;
+            Settings.ip = ip;
+            Settings.port = port;
+            Settings.keyPath = pemPath;
+            Settings.privKey = privateKey;
+
+            Settings.WriteSettings(Settings.configPath);
         }
     }
 }

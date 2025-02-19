@@ -28,6 +28,7 @@ namespace DarkChat.Helpers
         public event Action<Socket, string> OnDrawMsg;
         public event Action<Socket> OnClientOffline;
         public event Action<Socket, DarkMsg> OnClientOnline;
+        public event Action<Socket, DateTime> OnUpdateLastseen;
 
         public DarkNetwork(out ClientsHive theHive, HeartBeatMgr heartBeat)
         {
@@ -45,11 +46,12 @@ namespace DarkChat.Helpers
                 sockListen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                 IPAddress address = (ip.Length > 0) ? IPAddress.Parse(ip) : IPAddress.Any;
+
                 IPEndPoint endPoint = new IPEndPoint(address, port);
 
                 sockListen.Bind(endPoint);
 
-                sockListen.Listen(999999);
+                sockListen.Listen(99999);
 
                 Logger.Log($"Server is starting, listen on: {address}:{port}");
 
@@ -57,7 +59,6 @@ namespace DarkChat.Helpers
                 thrdListen = new Thread(ListenHandler);
                 thrdListen.IsBackground = true;
                 thrdListen.Start();
-
             }
             catch (Exception ex)
             {
@@ -65,14 +66,6 @@ namespace DarkChat.Helpers
             }
 
             return true;
-        }
-
-        private void UpdateLastseenByPong(Socket sock, DateTime dateTime)
-        {
-            lock (hive.lockerClients)
-            {
-                hive.dictClients[sock].lastSeen = dateTime;
-            }
         }
 
         private void ClientHandler(object obj)
@@ -118,7 +111,7 @@ namespace DarkChat.Helpers
                         case CommandCode.COMMAND_PING:
                             {
                                 // Update the lastseen of the client
-                                UpdateLastseenByPong(sockClient, darkMsg.lastSeen);
+                                UpdateLastseen(sockClient, darkMsg.lastSeen);
                                 // Replay pong to client
                                 Package.SendCmdPkg(sockClient, new DarkMsg()
                                 {
@@ -155,6 +148,11 @@ namespace DarkChat.Helpers
         public void ClientOnline(Socket sockClient, DarkMsg darkMsg)
         {
             OnClientOnline?.Invoke(sockClient, darkMsg);
+        }
+
+        public void UpdateLastseen(Socket sockClient, DateTime lastSeen)
+        {
+            OnUpdateLastseen?.Invoke(sockClient, lastSeen);
         }
 
         private void ListenHandler()

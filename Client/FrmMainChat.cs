@@ -23,9 +23,13 @@ namespace Client
         {
             InitializeComponent();
             this.lblTitle.Text = Settings.Version;
-            this.tlItemOnline.Text = "Status: Offline";
-            this.tlItemOnline.ForeColor = Color.Red;
+            // Show the horizontal scrollbar of log listbox
+            this.lstLogs.HorizontalScrollbar = true;
             this.rdMale.Checked = true;
+            this.btnConn.Tag = false;
+
+            // UI notify
+            ConnectUINotify(false);
 
             Logger.SubLogger(Log);
         }
@@ -87,20 +91,27 @@ namespace Client
                     return;
                 }
                 
-                // Connect to server
-                IPAddress address = IPAddress.Parse(ip);
-                IPEndPoint pt = new IPEndPoint(address, port);
+                if ((bool)this.btnConn.Tag == false)
+                {
+                    // Connect to server
+                    IPAddress address = IPAddress.Parse(ip);
+                    IPEndPoint pt = new IPEndPoint(address, port);
 
-                this.sockClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    this.sockClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-                this.sockClient.Connect(pt);
+                    this.sockClient.Connect(pt);
 
-                Logger.Log("Connect to server successfully");
+                    Logger.Log("Connect to server successfully");
 
-                // Create working thread
-                this.thrdClient = new Thread(ReceiveServerMsg);
-                this.thrdClient.IsBackground = true;
-                this.thrdClient.Start();
+                    // Create working thread
+                    this.thrdClient = new Thread(ReceiveServerMsg);
+                    this.thrdClient.IsBackground = true;
+                    this.thrdClient.Start();
+                }
+                else
+                {
+                    Disconnect();
+                }
             }
             catch (Exception ex)
             {
@@ -126,6 +137,7 @@ namespace Client
             {
                 if (!Package.RecvCmdPkg(sockClient, out darkMsg))
                 {
+                    Disconnect();
                     Logger.Log($"Disconnect with server");
                     break;
                 }
@@ -134,40 +146,15 @@ namespace Client
                     case CommandCode.TOKEN_JOIN:
                         {
                             // Reply from server indicates communicate with it successfully
-                            if (this.tlStatus.InvokeRequired)
-                            {
-                                this.tlStatus.Invoke(new Action(() =>
-                                {
-                                    this.tlItemOnline.ForeColor = Color.Green;
-                                    this.tlItemOnline.Text = "Status: Online";
-                                }));
-                            }
-                            else
-                            {
-                                this.tlItemOnline.ForeColor = Color.Green;
-                                this.tlItemOnline.Text = "Status: Offline";
-                            }
+                            ConnectUINotify(true);
                             // Start heartbeat thread
                             HeartBeatMgr.StartHeartbeat(this.sockClient);
-
                             break;
                         }
                     case CommandCode.TOKEN_LEAVE:
                         {
                             // 用户端离开了聊天室
-                            if (this.tlStatus.InvokeRequired)
-                            {
-                                this.tlStatus.Invoke(new Action(() =>
-                                {
-                                    this.tlItemOnline.ForeColor = Color.Red;
-                                    this.tlItemOnline.Text = "Status: Offline";
-                                }));
-                            }
-                            else
-                            {
-                                this.tlItemOnline.ForeColor = Color.Red;
-                                this.tlItemOnline.Text = "Status: Offline";
-                            }
+                            
                             break;
                         }
                     case CommandCode.TOKEN_MSG:
@@ -305,8 +292,203 @@ namespace Client
             this.Dispose();
         }
 
+        private void ConnectUINotify(bool fConnect)
+        {
+            if (this.txtName.InvokeRequired)
+            {
+                this.txtName.Invoke(new Action(() =>
+                {
+                    this.txtName.Enabled = !fConnect;
+                }));
+            }
+            else
+            {
+                this.txtName.Enabled = !fConnect;
+            }
+            if (this.btnConn.InvokeRequired)
+            {
+                this.btnConn.Invoke(new Action(() =>
+                {
+                    this.btnConn.Tag = fConnect;
+                    if (fConnect)
+                    {
+                        this.btnConn.Text = "Disconnect";
+                        this.btnConn.Tag = true;
+                    }
+                    else
+                    {
+                        this.btnConn.Text = "Connect";
+                        this.btnConn.Tag = false;
+                    }
+                }));
+            }
+            else
+            {
+                this.btnConn.Tag = fConnect;
+                if (fConnect)
+                {
+                    this.btnConn.Text = "Disconnect";
+                    this.btnConn.Tag = true;
+                }
+                else
+                {
+                    this.btnConn.Text = "Connect";
+                    this.btnConn.Tag = false;
+                }
+            }
+
+            if (this.rdMale.InvokeRequired)
+            {
+                this.rdMale.Invoke(new Action(() =>
+                {
+                    this.rdMale.Enabled = !fConnect;
+                }));
+            }
+            else
+            {
+                this.rdMale.Enabled = !fConnect;
+            }
+
+            if (this.rdFemale.InvokeRequired)
+            {
+                this.rdFemale.Invoke(new Action(() =>
+                {
+                    this.rdFemale.Enabled = !fConnect;
+                }));
+            }
+            else
+            {
+                this.rdFemale.Enabled = !fConnect;
+            }
+
+            if (this.rdUnknown.InvokeRequired)
+            {
+                this.rdUnknown.Invoke(new Action(() =>
+                {
+                    this.rdUnknown.Enabled = !fConnect;
+                }));
+            }
+            else
+            {
+                this.rdUnknown.Enabled = !fConnect;
+            }
+
+            if (this.txtNote.InvokeRequired)
+            {
+                this.txtNote.Invoke(new Action(() =>
+                {
+                    this.txtNote.Enabled = !fConnect;
+                }));
+            }
+            else
+            {
+                this.txtNote.Enabled = !fConnect;
+            }
+
+            if (this.txtIP.InvokeRequired)
+            {
+                this.txtIP.Invoke(new Action(() =>
+                {
+                    this.txtIP.Enabled = !fConnect;
+                }));
+            }
+            else
+            {
+                this.txtIP.Enabled = !fConnect;
+            }
+
+            if (this.txtPort.InvokeRequired)
+            {
+                this.txtPort.Invoke(new Action(() =>
+                {
+                    this.txtPort.Enabled = !fConnect;
+                }));
+            }
+            else
+            {
+                this.txtPort.Enabled = !fConnect;
+            }
+
+            if (this.txtChat.InvokeRequired)
+            {
+                this.txtChat.Invoke(new Action(() =>
+                {
+                    this.txtChat.Enabled = fConnect;
+                }));
+            }
+            else
+            {
+                this.txtChat.Enabled = fConnect;
+            }
+
+            if (this.lstTalkRecord.InvokeRequired)
+            {
+                this.lstTalkRecord.Invoke(new Action(() =>
+                {
+                    this.lstTalkRecord.Enabled = fConnect;
+                }));
+            }
+            else
+            {
+                this.lstTalkRecord.Enabled = fConnect;
+            }
+
+            if (this.btnSend.InvokeRequired)
+            {
+                this.btnSend.Invoke(new Action(() =>
+                {
+                    this.btnSend.Enabled = fConnect;
+                }));
+            }
+            else
+            {
+                this.btnSend.Enabled = fConnect;
+            }
+
+            // Notify Toolbar flag status
+            ToolbarUINotify(fConnect);
+        }
+
+        private void ToolbarUINotify(bool fConnect)
+        {
+            if (fConnect)
+            {
+                if (this.tlStatus.InvokeRequired)
+                {
+                    this.tlStatus.Invoke(new Action(() =>
+                    {
+                        if (fConnect)
+                        {
+                            this.tlItemOnline.ForeColor = Color.Green;
+                            this.tlItemOnline.Text = "Status: Online";
+                        }
+                        else
+                        {
+                            this.tlItemOnline.ForeColor = Color.Red;
+                            this.tlItemOnline.Text = "Status: Offline";
+                        } 
+                    }));
+                }
+                else
+                {
+                    if (fConnect)
+                    {
+                        this.tlItemOnline.ForeColor = Color.Green;
+                        this.tlItemOnline.Text = "Status: Online";
+                    }
+                    else
+                    {
+                        this.tlItemOnline.ForeColor = Color.Red;
+                        this.tlItemOnline.Text = "Status: Offline";
+                    }
+                }
+            }
+        }
+
         private void Disconnect()
         {
+            // UI notify
+            ConnectUINotify(false);
             // Shutdown the heartbeat
             HeartBeatMgr.StopHeartbeat();
             // Shift to offline
@@ -323,6 +505,7 @@ namespace Client
                 this.tlItemOnline.Text = "Status: Offline";
                 this.tlItemOnline.ForeColor = Color.Red;
             }
+            Logger.Log("Disconnect with server");
         }
 
         private void btnMinimum_Click(object sender, EventArgs e)

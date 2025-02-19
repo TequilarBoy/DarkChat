@@ -39,8 +39,7 @@ namespace DarkChat.Helpers
         public static bool WriteTextFile(string filePath, string content, int bufferSize = 4096)
         {
             if (string.IsNullOrEmpty(filePath) || 
-                string.IsNullOrEmpty(content) || 
-                !File.Exists(filePath))
+                string.IsNullOrEmpty(content))
             {
                 return false;
             }
