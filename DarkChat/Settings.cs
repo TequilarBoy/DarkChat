@@ -1,19 +1,26 @@
 ﻿using DarkChat.Helpers;
+using DarkClient.Unit;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace DarkChat
 {
     public static class Settings
     {
-        public static string Version { private set; get; } = "v1.3.2";
+        public static string Version { private set; get; } = "v1.3.3";
         // Private key content
         public static string privKey { set; get; } = "";
+        // Public key content
+        public static string pubKey { set; get; } = "";
         // Default private key path
         public static string keyPath { set; get; } = "";
+        // Default public key path
+        public static string pubKeyPath { set; get; } = "";
         // Singleton server mode
         public static bool singleServer = false;
         // If auto start after restarting the host
@@ -24,6 +31,8 @@ namespace DarkChat
         public static string ip = "";
         // Default config file path
         public static string configPath = "darkconfig.json";
+        // Mutant name 
+        public static string mutexName = "DarkChatMutex";
 
         public static event Action<bool> OnSettingLoadUINotify;
 
@@ -36,6 +45,8 @@ namespace DarkChat
                 { "Port", Settings.port },
                 { "KeyPath", Settings.keyPath },
                 { "PrivKey", Settings.privKey },
+                { "PubKeyPath", Settings.pubKeyPath },
+                { "PubKey", Settings.pubKey },
                 { "AutoStart", Settings.autoStart },
                 { "SingleServer", Settings.singleServer }
             };
@@ -48,6 +59,54 @@ namespace DarkChat
         {
             OnSettingLoadUINotify?.Invoke(loadok);
         }
+
+        public static bool ReadKeysPair()
+        {
+            try
+            {
+                var rsa = ClientsHive.GetHive.rsa;
+
+                if (string.IsNullOrEmpty(Settings.privKey))
+                {
+                    if (File.Exists(Settings.keyPath))
+                    {
+                        Settings.privKey = IO.ReadTextFile(Settings.keyPath);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                if (!rsa.IsPkcs1PrivateKey(Settings.privKey))
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(Settings.pubKey))
+                {
+                    if (File.Exists(Settings.pubKeyPath))
+                    {
+                        Settings.pubKey = IO.ReadTextFile(Settings.pubKeyPath);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                if (!rsa.IsPkcs1PublicKey(Settings.pubKey))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"{ex.Message}");
+                return false;
+            }
+        }
+
 
         public static bool ReadSettings(string path)
         {
@@ -92,22 +151,44 @@ namespace DarkChat
                 Settings.port = Convert.ToInt32(dictSettings["Port"]);
                 Settings.ip = dictSettings["IP"].ToString();
                 Settings.keyPath = dictSettings["KeyPath"].ToString();
+                Settings.pubKey = dictSettings["PubKey"].ToString();
+                Settings.pubKeyPath = dictSettings["PubKeyPath"].ToString();
 
-                if (!Settings.privKey.StartsWith("-----BEGIN PUBLIC KEY-----") ||
-                    !Settings.privKey.EndsWith("-----END PUBLIC KEY-----\r\n"))
+                var rsa = ClientsHive.GetHive.rsa;
+
+                if (!rsa.IsPkcs1PrivateKey(Settings.privKey))
                 {
                     if (!File.Exists(Settings.keyPath))
                     {
-                        Logger.Log("The version of the configuration file does not match, regenerate it");
+                        Logger.Log("Wrong keys pair, regenerate it");
                         SettingLoadUINotify(false);
                         return false;
                     }
                     // Read the key again and check
                     Settings.privKey = IO.ReadTextFile(Settings.keyPath);
-                    if (!Settings.privKey.StartsWith("-----BEGIN PUBLIC KEY-----") ||
-                    !Settings.privKey.EndsWith("-----END PUBLIC KEY-----\r\n"))
+
+                    if (!rsa.IsPkcs1PrivateKey(Settings.privKey))
                     {
-                        Logger.Log("The version of the configuration file does not match, regenerate it");
+                        Logger.Log("Wrong keys pair, regenerate it");
+                        SettingLoadUINotify(false);
+                        return false;
+                    }
+                }
+
+                if (!rsa.IsPkcs1PublicKey(Settings.pubKey))
+                {
+                    if (!File.Exists(Settings.pubKeyPath))
+                    {
+                        Logger.Log("Wrong keys pair, regenerate it");
+                        SettingLoadUINotify(false);
+                        return false;
+                    }
+                    // Read the key again and check
+                    Settings.pubKey = IO.ReadTextFile(Settings.pubKeyPath);
+
+                    if (!rsa.IsPkcs1PublicKey(Settings.pubKey))
+                    {
+                        Logger.Log("Wrong keys pair, regenerate it");
                         SettingLoadUINotify(false);
                         return false;
                     }
@@ -121,6 +202,27 @@ namespace DarkChat
             Logger.Log("Load configuration successfully");
 
             return true;
+        }
+
+        public static void InitSettings()
+        {
+            try
+            {
+                // Keep singleton
+                if (Settings.singleServer)
+                {
+                    if (!MutexControl.CreateMutex())
+                    {
+                        Environment.Exit(0);
+                    }
+                }
+                // Set Autostartup
+                if (Settings.autoStart)
+                {
+                    Install.Autostartup();
+                }
+            }
+            catch { }
         }
         
     }

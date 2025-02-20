@@ -76,6 +76,9 @@
             this.chkSingleton = new System.Windows.Forms.CheckBox();
             this.chkAutostartup = new System.Windows.Forms.CheckBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnDefPubKeyBrowse = new System.Windows.Forms.Button();
+            this.txtDefPubKeyPath = new System.Windows.Forms.TextBox();
+            this.lblDefPubKey = new System.Windows.Forms.Label();
             this.tabMain.SuspendLayout();
             this.tabServer.SuspendLayout();
             this.tagSafe.SuspendLayout();
@@ -375,9 +378,9 @@
             this.grpCurSetup.Controls.Add(this.lblCurDefPort);
             this.grpCurSetup.Controls.Add(this.lblCurDefIP);
             this.grpCurSetup.Controls.Add(this.lblCurDefPriKeyPath);
-            this.grpCurSetup.Location = new System.Drawing.Point(8, 207);
+            this.grpCurSetup.Location = new System.Drawing.Point(8, 258);
             this.grpCurSetup.Name = "grpCurSetup";
-            this.grpCurSetup.Size = new System.Drawing.Size(696, 285);
+            this.grpCurSetup.Size = new System.Drawing.Size(696, 234);
             this.grpCurSetup.TabIndex = 1;
             this.grpCurSetup.TabStop = false;
             this.grpCurSetup.Text = "Current Config";
@@ -429,6 +432,9 @@
             // 
             // grpServerConfig
             // 
+            this.grpServerConfig.Controls.Add(this.btnDefPubKeyBrowse);
+            this.grpServerConfig.Controls.Add(this.txtDefPubKeyPath);
+            this.grpServerConfig.Controls.Add(this.lblDefPubKey);
             this.grpServerConfig.Controls.Add(this.btnSave);
             this.grpServerConfig.Controls.Add(this.btnDefBrowse);
             this.grpServerConfig.Controls.Add(this.txtDefPriKeyPath);
@@ -441,14 +447,14 @@
             this.grpServerConfig.Controls.Add(this.chkAutostartup);
             this.grpServerConfig.Location = new System.Drawing.Point(8, 6);
             this.grpServerConfig.Name = "grpServerConfig";
-            this.grpServerConfig.Size = new System.Drawing.Size(696, 195);
+            this.grpServerConfig.Size = new System.Drawing.Size(696, 246);
             this.grpServerConfig.TabIndex = 0;
             this.grpServerConfig.TabStop = false;
             this.grpServerConfig.Text = "Server Config Generator";
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(374, 83);
+            this.btnSave.Location = new System.Drawing.Point(380, 137);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(245, 40);
             this.btnSave.TabIndex = 9;
@@ -484,14 +490,14 @@
             // 
             // txtDefPort
             // 
-            this.txtDefPort.Location = new System.Drawing.Point(102, 106);
+            this.txtDefPort.Location = new System.Drawing.Point(108, 160);
             this.txtDefPort.Name = "txtDefPort";
             this.txtDefPort.Size = new System.Drawing.Size(196, 23);
             this.txtDefPort.TabIndex = 5;
             // 
             // txtDefIP
             // 
-            this.txtDefIP.Location = new System.Drawing.Point(102, 67);
+            this.txtDefIP.Location = new System.Drawing.Point(108, 121);
             this.txtDefIP.Name = "txtDefIP";
             this.txtDefIP.Size = new System.Drawing.Size(196, 23);
             this.txtDefIP.TabIndex = 4;
@@ -499,7 +505,7 @@
             // lblDefPort
             // 
             this.lblDefPort.AutoSize = true;
-            this.lblDefPort.Location = new System.Drawing.Point(16, 109);
+            this.lblDefPort.Location = new System.Drawing.Point(22, 163);
             this.lblDefPort.Name = "lblDefPort";
             this.lblDefPort.Size = new System.Drawing.Size(80, 17);
             this.lblDefPort.TabIndex = 3;
@@ -508,7 +514,7 @@
             // lblDefIP
             // 
             this.lblDefIP.AutoSize = true;
-            this.lblDefIP.Location = new System.Drawing.Point(29, 70);
+            this.lblDefIP.Location = new System.Drawing.Point(35, 124);
             this.lblDefIP.Name = "lblDefIP";
             this.lblDefIP.Size = new System.Drawing.Size(67, 17);
             this.lblDefIP.TabIndex = 2;
@@ -517,7 +523,7 @@
             // chkSingleton
             // 
             this.chkSingleton.AutoSize = true;
-            this.chkSingleton.Location = new System.Drawing.Point(168, 156);
+            this.chkSingleton.Location = new System.Drawing.Point(166, 202);
             this.chkSingleton.Name = "chkSingleton";
             this.chkSingleton.Size = new System.Drawing.Size(101, 21);
             this.chkSingleton.TabIndex = 1;
@@ -527,7 +533,7 @@
             // chkAutostartup
             // 
             this.chkAutostartup.AutoSize = true;
-            this.chkAutostartup.Location = new System.Drawing.Point(52, 156);
+            this.chkAutostartup.Location = new System.Drawing.Point(50, 202);
             this.chkAutostartup.Name = "chkAutostartup";
             this.chkAutostartup.Size = new System.Drawing.Size(96, 21);
             this.chkAutostartup.TabIndex = 0;
@@ -543,6 +549,32 @@
             this.tabPage1.TabIndex = 3;
             this.tabPage1.Text = "Builder";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // btnDefPubKeyBrowse
+            // 
+            this.btnDefPubKeyBrowse.Location = new System.Drawing.Point(590, 70);
+            this.btnDefPubKeyBrowse.Name = "btnDefPubKeyBrowse";
+            this.btnDefPubKeyBrowse.Size = new System.Drawing.Size(81, 25);
+            this.btnDefPubKeyBrowse.TabIndex = 12;
+            this.btnDefPubKeyBrowse.Text = "Browse";
+            this.btnDefPubKeyBrowse.UseVisualStyleBackColor = true;
+            this.btnDefPubKeyBrowse.Click += new System.EventHandler(this.btnDefPubKeyBrowse_Click);
+            // 
+            // txtDefPubKeyPath
+            // 
+            this.txtDefPubKeyPath.Location = new System.Drawing.Point(184, 71);
+            this.txtDefPubKeyPath.Name = "txtDefPubKeyPath";
+            this.txtDefPubKeyPath.Size = new System.Drawing.Size(400, 23);
+            this.txtDefPubKeyPath.TabIndex = 11;
+            // 
+            // lblDefPubKey
+            // 
+            this.lblDefPubKey.AutoSize = true;
+            this.lblDefPubKey.Location = new System.Drawing.Point(29, 74);
+            this.lblDefPubKey.Name = "lblDefPubKey";
+            this.lblDefPubKey.Size = new System.Drawing.Size(144, 17);
+            this.lblDefPubKey.TabIndex = 10;
+            this.lblDefPubKey.Text = "Default Public Key Path:";
             // 
             // FrmMainServer
             // 
@@ -620,6 +652,9 @@
         private System.Windows.Forms.Label lblCurDefIP;
         private System.Windows.Forms.Label lblCurDefPriKeyPath;
         private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.Button btnDefPubKeyBrowse;
+        private System.Windows.Forms.TextBox txtDefPubKeyPath;
+        private System.Windows.Forms.Label lblDefPubKey;
     }
 }
 

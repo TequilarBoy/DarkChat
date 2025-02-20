@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Test;
 
 namespace DarkClient.Unit
 {
@@ -55,6 +56,8 @@ namespace DarkClient.Unit
         public object lockerClients { get; private set; } = new object();
 
         public object lockerHandlers { get; private set; } = new object();
+
+        public RsaUtils rsa = new RsaUtils();
 
         // Make it uninstanceable
         private ClientsHive() { }

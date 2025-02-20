@@ -11,6 +11,8 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Pkcs;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using DarkChat;
 
 namespace Test
 {
@@ -19,6 +21,18 @@ namespace Test
         public RSA privateRsa;
         public RSA publicRsa;
         public Encoding DataEncoding;
+
+        public bool InitRSA(int keySize = 2048)
+        {
+            if (!Settings.ReadKeysPair())
+            {
+                return false;
+            }
+            else
+            {
+                return Init(Encoding.UTF8, Settings.pubKey, Settings.privKey, keySize);
+            }
+        }
 
         public bool Init(Encoding encoding, string publicKey, 
             string privateKey = null, int keySize = 2048)
@@ -252,6 +266,18 @@ namespace Test
             }
 
             return res;
+        }
+
+        public bool IsPkcs1PrivateKey(string key)
+        {
+            return (key.StartsWith("-----BEGIN RSA PRIVATE KEY-----") &&
+                key.EndsWith("-----END RSA PRIVATE KEY-----\r\n"));
+        }
+
+        public bool IsPkcs1PublicKey(string key)
+        {
+            return (key.StartsWith("-----BEGIN PUBLIC KEY-----") &&
+                key.EndsWith("-----END PUBLIC KEY-----\r\n"));
         }
 
         /// <summary>

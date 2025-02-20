@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cryptography\AES256.cs" />
+    <Compile Include="Cryptography\DarkRandom.cs" />
     <Compile Include="Cryptography\RsaUtils.cs" />
     <Compile Include="Cryptography\SHA.cs" />
     <Compile Include="FrmMainServer.cs">
@@ -111,11 +112,14 @@
     <Compile Include="FrmMainServer.Designer.cs">
       <DependentUpon>FrmMainServer.cs</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Common.cs" />
     <Compile Include="Helpers\DarkNetwork.cs" />
     <Compile Include="Helpers\GeoLocate.cs" />
     <Compile Include="Helpers\HeartBeatMgr.cs" />
+    <Compile Include="Helpers\Install.cs" />
     <Compile Include="Helpers\IO.cs" />
     <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Helpers\MutexControl.cs" />
     <Compile Include="Helpers\Package.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

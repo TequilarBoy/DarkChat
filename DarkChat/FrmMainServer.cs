@@ -45,19 +45,25 @@ namespace DarkChat
             // Load config first
             Settings.OnSettingLoadUINotify += SettingLoadUINotify;
             Settings.ReadSettings(null);
+            // Initialize settings
+            Settings.InitSettings();
             // Initialize heartbeat checking object
             hearBeat = new HeartBeatMgr();
             hearBeat.OnHeartbeatClientOffline += ClientOffline;
             // Initialize network 
             darkNet = new DarkNetwork(out hive, hearBeat);
-            // Initialize cryptography object
-            rsa = new RsaUtils();
+            rsa = hive.rsa;
+            if (!rsa.InitRSA())
+            {
+                MessageBox.Show("Private key doesn't exist, generate it first", "Error");
+            }
             // Subscribles UI notify events
             darkNet.OnDrawMsg += DrawMsg;
             darkNet.OnClientOnline += ClientOnline;
             darkNet.OnClientOffline += ClientOffline;
             darkNet.OnUpdateLastseen += UpdateLastseen;
         }
+
 
         public void DrawMsg(Socket sock, string msg)
         {
@@ -138,6 +144,7 @@ namespace DarkChat
                     this.txtPriKeyPath.Text = "";
                 }
             }
+
 
             if (this.lblCurDefPriKeyPath.InvokeRequired)
             {
@@ -499,13 +506,13 @@ namespace DarkChat
                 
                 using (StreamWriter writer = new StreamWriter(priKeyPath))
                 {
-                    writer.Write(lstKeys[1]);
+                    writer.Write(lstKeys[0]);
                     writer.Flush();
                 }
 
                 using (StreamWriter writer = new StreamWriter(pubKeyPath))
                 {
-                    writer.Write(lstKeys[0]);
+                    writer.Write(lstKeys[1]);
                     writer.Flush();
                 }
 
@@ -614,26 +621,59 @@ namespace DarkChat
             }
 
             // Check private key
-            string pemPath = this.txtDefPriKeyPath.Text;
-            if (!File.Exists(pemPath))
+            string priKeyPath = this.txtDefPriKeyPath.Text;
+            if (!File.Exists(priKeyPath))
             {
                 MessageBox.Show("Private key file doesn't exist", "Error", MessageBoxButtons.OK);
+                return;
+            }
+
+            // Check public key
+            string pubKeyPath = this.txtDefPubKeyPath.Text;
+            if (!File.Exists(pubKeyPath))
+            {
+                MessageBox.Show("Public key file doesn't exist", "Error", MessageBoxButtons.OK);
                 return;
             }
 
             bool autoStartup = this.chkAutostartup.Checked;
             bool singleton = this.chkSingleton.Checked;
             // Read private key content
-            string privateKey = IO.ReadTextFile(pemPath);
+            string privateKey = IO.ReadTextFile(priKeyPath);
+            // Read public key content
+            string publicKey = IO.ReadTextFile(pubKeyPath);
 
             Settings.autoStart = autoStartup;
             Settings.singleServer = singleton;
             Settings.ip = ip;
             Settings.port = port;
-            Settings.keyPath = pemPath;
+            Settings.keyPath = priKeyPath;
+            Settings.pubKeyPath = pubKeyPath;
             Settings.privKey = privateKey;
+            Settings.pubKey = publicKey;
 
-            Settings.WriteSettings(Settings.configPath);
+            if (Settings.WriteSettings(Settings.configPath))
+            {
+                MessageBox.Show("Write config file successfully! Restart the app", "Ok");
+            }
+            else
+            {
+                MessageBox.Show("Failed to rite config file!", "Error");
+            }
+        }
+
+        private void btnDefPubKeyBrowse_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog dlg = new OpenFileDialog())
+            {
+                dlg.InitialDirectory = Environment.CurrentDirectory;
+                dlg.Filter = "Public key file(*.pem)|*.pem;";
+                dlg.Multiselect = false;
+                if (DialogResult.OK == dlg.ShowDialog())
+                {
+                    this.txtDefPubKeyPath.Text = dlg.FileName;
+                }
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DarkChat.Cryptography;
+using DarkChat.Helpers;
+using System;
 using System.Windows.Forms;
 
 namespace DarkChat
